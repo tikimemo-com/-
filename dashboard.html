@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThikiMemo - 地域安全情報共有プラットフォーム</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    
+    <script src="script.js" defer></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body class="dashboard-page">
+    <header class="header">
+        <div class="header-content">
+            <a href="dashboard.html" class="logo">
+                🚨 ThikiMemo
+            </a>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item">マップ</a>
+                <a href="#" class="nav-item">投稿一覧</a>
+                <a href="#" class="nav-item">統計</a>
+                <a href="#" class="nav-item">設定</a>
+            </nav>
+            <a href="index.html" class="login-button" id="dashboard-login-button">ログイン</a>
+            <a href="account.html" id="account-avatar" style="display:none;">
+                <img id="user-avatar-img" src="" alt="アカウント" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #3498db; cursor:pointer;">
+            </a>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="hero-section">
+            <h1 class="hero-title">地域の安全を守る</h1>
+            <p class="hero-subtitle">
+                あなたの街の危険情報をみんなで共有し、<br>
+                より安全なコミュニティを作りましょう
+            </p>
+            <div class="cta-buttons">
+                <a href="report.html" class="cta-button">
+                    📍 危険を報告
+                </a>
+                <a href="full-map.html" class="cta-button secondary">
+                    🗺️ マップを見る
+                </a>
+            </div>
+        </section>
+
+        <section class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number" id="totalReports"></div>
+                <div class="stat-label">総投稿数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="thisWeek"></div>
+                <div class="stat-label">今週の投稿</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="activeUsers"></div>
+                <div class="stat-label">アクティブユーザー</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="resolvedIssues"></div>
+                <div class="stat-label">解決済み</div>
+            </div>
+        </section>
+
+        <section class="danger-types-section">
+            <h2 class="section-title">投稿の種類</h2>
+            <div class="danger-grid">
+                <div class="danger-card kiken" onclick="openFilteredMap('kiken')">
+                    <div class="danger-icon">🚨</div>
+                    <h3 class="danger-title">危険</h3>
+                    <p class="danger-count"><span id="kikenCount">0</span>件の報告</p>
+                    <p class="danger-examples">不審者情報、緊急の災害、交通事故など</p>
+                </div>
+                <div class="danger-card johou" onclick="openFilteredMap('johou')">
+                    <div class="danger-icon">ℹ️</div>
+                    <h3 class="danger-title">情報</h3>
+                    <p class="danger-count"><span id="johouCount">0</span>件の報告</p>
+                    <p class="danger-examples">イベント、交通規制、工事のお知らせなど</p>
+                </div>
+                <div class="danger-card chui" onclick="openFilteredMap('chui')">
+                    <div class="danger-icon">⚠️</div>
+                    <h3 class="danger-title">注意</h3>
+                    <p class="danger-count"><span id="chuiCount">0</span>件の報告</p>
+                    <p class="danger-examples">落石注意、滑りやすい道路、暗い道など</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="map-preview">
+            <h2 class="section-title">危険情報マップ</h2>
+            <div id="danger-map"></div>
+        </section>
+
+        <section class="recent-reports">
+            <h2 class="section-title">最新の投稿</h2>
+            <div class="recent-list" id="recent-list">
+                </div>
+        </section>
+    </main>
+
+    <div class="floating-actions">
+        <button class="floating-button primary" onclick="reportDanger()" title="危険を報告">
+            📍
+        </button>
+        <button class="floating-button secondary" onclick="viewMap()" title="マップを表示">
+            🗺️
+        </button>
+    </div>
+    <div id="custom-dialog" class="custom-dialog" style="display:none;">
+        <div class="custom-dialog-content">
+            <span id="custom-dialog-message"></span>
+            <button id="custom-dialog-close" class="login-btn" style="margin-top:1rem;">閉じる</button>
+        </div>
+    </div>
+</body>
+</html>
